@@ -171,7 +171,12 @@ const generateStudyGroups = (university: string): StudyGroup[] => {
 }
 
 export function initializeMockData(university: string) {
-  const isInitialized = getStorage('unihub_mock_initialized_v2', false);
+  // v3: clear legacy fake conversations seeded in earlier builds
+  if (!getStorage('unihub_mock_initialized_v3', false)) {
+    setStorage('unihub_conversations', []);
+  }
+
+  const isInitialized = getStorage('unihub_mock_initialized_v3', false);
   if (isInitialized) return;
 
   const sampleAssignments: Assignment[] = [
@@ -218,5 +223,5 @@ export function initializeMockData(university: string) {
   setStorage('unihub_marketplace', generateMarketplaceItems(university));
   setStorage('unihub_study_groups', generateStudyGroups(university));
 
-  setStorage('unihub_mock_initialized_v2', true);
+  setStorage('unihub_mock_initialized_v3', true);
 }

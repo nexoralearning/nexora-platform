@@ -41,9 +41,15 @@ export default function Messages() {
 
   useEffect(() => {
     if (user) {
-      const stored = getStorage<Conversation[]>('unihub_conversations', []);
+      let stored = getStorage<Conversation[]>('unihub_conversations', []);
+      // Remove any legacy mock conversations that were seeded in older builds
+      const LEGACY_MOCK_IDS = new Set(['c1', 'c2', 'c3']);
+      const cleaned = stored.filter(c => !LEGACY_MOCK_IDS.has(c.id));
+      if (cleaned.length !== stored.length) {
+        setStorage('unihub_conversations', cleaned);
+        stored = cleaned;
+      }
       setConversations(stored);
-      // Defer to avoid triggering SidebarLayout setState during the same flush
       setTimeout(() => window.dispatchEvent(new Event('unihub_messages_updated')), 0);
     }
   }, [user]);
