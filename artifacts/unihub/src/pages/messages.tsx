@@ -28,47 +28,8 @@ export interface Conversation {
   avatarFallback: string;
 }
 
-const MOCK_CONVERSATIONS: Conversation[] = [
-  {
-    id: "c1",
-    type: "direct",
-    name: "Alex Smith",
-    participants: ["u1", "currentUser"],
-    avatarFallback: "AS",
-    unreadCount: 2,
-    lastActivity: new Date().toISOString(),
-    messages: [
-      { id: "m1", senderId: "u1", text: "Hey! Are you still selling that textbook?", timestamp: new Date(Date.now() - 3600000).toISOString(), read: true },
-      { id: "m2", senderId: "u1", text: "I can meet on campus tomorrow.", timestamp: new Date(Date.now() - 3500000).toISOString(), read: false },
-      { id: "m3", senderId: "u1", text: "Let me know what time works for you.", timestamp: new Date().toISOString(), read: false }
-    ]
-  },
-  {
-    id: "c2",
-    type: "group",
-    name: "CS50 Study Group",
-    participants: ["u2", "u3", "currentUser"],
-    avatarFallback: "CS",
-    unreadCount: 0,
-    lastActivity: new Date(Date.now() - 86400000).toISOString(),
-    messages: [
-      { id: "m4", senderId: "u2", text: "Did anyone figure out problem set 4?", timestamp: new Date(Date.now() - 86400000).toISOString(), read: true },
-      { id: "m5", senderId: "currentUser", text: "Yes, I can help you with the memory leak issue.", timestamp: new Date(Date.now() - 80000000).toISOString(), read: true }
-    ]
-  },
-  {
-    id: "c3",
-    type: "marketplace",
-    name: "Inquiry: iPad Pro 11\"",
-    participants: ["u4", "currentUser"],
-    avatarFallback: "IP",
-    unreadCount: 1,
-    lastActivity: new Date(Date.now() - 172800000).toISOString(),
-    messages: [
-      { id: "m6", senderId: "u4", text: "Would you take $450 for the iPad?", timestamp: new Date(Date.now() - 172800000).toISOString(), read: false }
-    ]
-  }
-];
+// No pre-seeded conversations — users start fresh and conversations
+// are created when they contact sellers, join study groups, or message peers.
 
 export default function Messages() {
   const user = useRequireAuth();
@@ -80,13 +41,10 @@ export default function Messages() {
 
   useEffect(() => {
     if (user) {
-      let stored = getStorage<Conversation[]>('unihub_conversations', []);
-      if (stored.length === 0) {
-        stored = MOCK_CONVERSATIONS;
-        setStorage('unihub_conversations', stored);
-      }
+      const stored = getStorage<Conversation[]>('unihub_conversations', []);
       setConversations(stored);
-      window.dispatchEvent(new Event('unihub_messages_updated'));
+      // Defer to avoid triggering SidebarLayout setState during the same flush
+      setTimeout(() => window.dispatchEvent(new Event('unihub_messages_updated')), 0);
     }
   }, [user]);
 

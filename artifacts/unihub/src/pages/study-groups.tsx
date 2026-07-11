@@ -294,21 +294,7 @@ export default function StudyGroups() {
               </DialogHeader>
               
               <div className="flex-1 p-4 overflow-y-auto bg-card/30 space-y-6 relative">
-                {/* Mock historical messages to make it look populated */}
-                <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center font-bold text-xs shrink-0">SA</div>
-                  <div className="flex flex-col items-start max-w-[80%]">
-                    <div className="flex items-baseline gap-2 mb-1">
-                      <span className="font-semibold text-xs text-foreground/80">Sarah A.</span>
-                      <span className="text-[10px] text-muted-foreground">Yesterday, 10:42 AM</span>
-                    </div>
-                    <div className="bg-sidebar border rounded-2xl rounded-tl-sm p-3 text-sm shadow-sm text-foreground/90">
-                      Does anyone have the notes for week 3? I missed the lecture.
-                    </div>
-                  </div>
-                </div>
-
-                {/* Actual messages from state */}
+                {/* Messages from state */}
                 {(selectedGroup.messages || []).map((msg, idx) => {
                   const isMe = msg.sender === user.name;
                   return (
