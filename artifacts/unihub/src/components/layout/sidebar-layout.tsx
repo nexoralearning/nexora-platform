@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { 
   LayoutDashboard, BookOpen, Youtube, FileText, 
   FileStack, Users, CalendarCheck, Briefcase, 
-  Store, Settings, LogOut, Menu, X, Moon, Sun
+  Store, Settings, LogOut, Menu, X, Moon, Sun, MessageSquare
 } from "lucide-react";
 import { SiReact } from "react-icons/si"; // Placeholder for brand
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getCurrentUser, logout } from "@/lib/auth";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
+import { getStorage } from "@/lib/storage";
 
 export function SidebarLayout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const user = getCurrentUser();
   const { theme, setTheme } = useTheme();
 
@@ -22,6 +24,24 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
     logout();
     setLocation("/login");
   };
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const convos = getStorage<any[]>('unihub_conversations', []);
+      const unreadCount = convos.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+      setUnreadMessages(unreadCount);
+    };
+    
+    handleStorageChange();
+    window.addEventListener('storage', handleStorageChange);
+    // Custom event for same-window updates
+    window.addEventListener('unihub_messages_updated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('unihub_messages_updated', handleStorageChange);
+    };
+  }, []);
 
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/" },
@@ -33,11 +53,12 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
     { icon: CalendarCheck, label: "Assignments", href: "/assignments" },
     { icon: Briefcase, label: "Jobs & Internships", href: "/jobs" },
     { icon: Store, label: "Marketplace", href: "/marketplace" },
+    { icon: MessageSquare, label: "Messages", href: "/messages", badge: unreadMessages > 0 ? unreadMessages : undefined },
   ];
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-sidebar border-r border-sidebar-border">
-      <div className="flex items-center px-6 h-16 border-b border-sidebar-border">
+      <div className="flex items-center px-6 h-16 border-b border-sidebar-border shrink-0">
         <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-sidebar-foreground">
           <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
             <BookOpen className="w-5 h-5" />
@@ -53,17 +74,24 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
         {navItems.map((item) => {
           const isActive = location === item.href || (item.href !== "/" && location.startsWith(item.href));
           return (
-            <Link key={item.href} href={item.href} className="block">
+            <Link key={item.href} href={item.href} className="block mb-1">
               <div
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer
+                className={`flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer
                   ${isActive 
                     ? "bg-sidebar-primary/10 text-sidebar-primary" 
                     : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                   }
                 `}
               >
-                <item.icon className={`w-5 h-5 ${isActive ? "text-sidebar-primary" : "text-sidebar-foreground/50"}`} />
-                {item.label}
+                <div className="flex items-center gap-3">
+                  <item.icon className={`w-5 h-5 ${isActive ? "text-sidebar-primary" : "text-sidebar-foreground/50"}`} />
+                  {item.label}
+                </div>
+                {item.badge !== undefined && (
+                  <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    {item.badge > 99 ? '99+' : item.badge}
+                  </span>
+                )}
               </div>
             </Link>
           );
@@ -86,7 +114,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
         </Link>
       </div>
 
-      <div className="p-4 border-t border-sidebar-border space-y-4">
+      <div className="p-4 border-t border-sidebar-border space-y-4 shrink-0">
         <div className="flex items-center justify-between px-2">
           <span className="text-sm font-medium text-sidebar-foreground/70">Theme</span>
           <Button 
@@ -111,7 +139,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
               <span className="text-xs text-sidebar-foreground/60 truncate">{user?.university || "University"}</span>
             </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={handleLogout} className="text-sidebar-foreground/60 hover:text-destructive hover:bg-destructive/10">
+          <Button variant="ghost" size="icon" onClick={handleLogout} className="text-sidebar-foreground/60 hover:text-destructive hover:bg-destructive/10 shrink-0">
             <LogOut className="w-4 h-4" />
           </Button>
         </div>
@@ -122,7 +150,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
       {/* Mobile header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-border bg-background z-20">
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-border bg-background z-20 shrink-0">
         <div className="flex items-center gap-2 font-bold text-xl">
           <div className="bg-primary text-primary-foreground p-1 rounded-md">
             <BookOpen className="w-5 h-5" />
@@ -150,7 +178,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-3/4 max-w-sm z-40 md:hidden"
+              className="fixed inset-y-0 left-0 w-3/4 max-w-sm z-40 md:hidden bg-sidebar"
             >
               <SidebarContent />
             </motion.div>
@@ -159,12 +187,12 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
       </AnimatePresence>
 
       {/* Desktop sidebar */}
-      <div className="hidden md:block w-64 lg:w-72 flex-shrink-0 h-screen sticky top-0">
+      <div className="hidden md:block w-64 lg:w-72 flex-shrink-0 h-[100dvh] sticky top-0">
         <SidebarContent />
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-[100dvh] overflow-hidden">
         <main className="flex-1 overflow-y-auto">
           {children}
         </main>

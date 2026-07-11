@@ -6,40 +6,71 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Users, MessagesSquare, Hash, Activity, Send } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Users, MessagesSquare, Hash, Activity, Send, Plus, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-// Add some extra mock groups if needed
-const generateExtraGroups = (uni: string): StudyGroup[] => [
-  { id: 'g3', name: 'Med 2024 Study Buddy', subject: 'Medicine', university: uni, memberCount: 12, activityStatus: 'Active', description: 'Small group for anatomy review.', tags: ['Anatomy', 'Finals'], type: 'Subject' },
-  { id: 'g4', name: 'Business Case Prep', subject: 'Business', university: uni, memberCount: 45, activityStatus: 'Quiet', description: 'Prep for consulting interviews.', tags: ['Consulting', 'Cases'], type: 'Subject' },
-  { id: 'g5', name: `${uni} Freshers`, subject: 'General', university: uni, memberCount: 890, activityStatus: 'Very Active', description: 'General chat for all first years.', tags: ['Freshers', 'Social'], type: 'University' },
-  { id: 'g6', name: 'Engineering Project Hub', subject: 'Engineering', university: uni, memberCount: 156, activityStatus: 'Active', description: 'Find teammates for senior design.', tags: ['Projects', 'Team'], type: 'University' },
-];
+import { format } from "date-fns";
 
 export default function StudyGroups() {
   const user = useRequireAuth();
   const [groups, setGroups] = useState<StudyGroup[]>([]);
   const [activeTab, setActiveTab] = useState("subject");
+  const [search, setSearch] = useState("");
   
+  // Create Group Form
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newType, setNewType] = useState<StudyGroup['type']>("Subject");
+  const [newSubject, setNewSubject] = useState("");
+  const [newDesc, setNewDesc] = useState("");
+
   // Chat UI state
   const [selectedGroup, setSelectedGroup] = useState<StudyGroup | null>(null);
   const [chatInput, setChatInput] = useState("");
 
   useEffect(() => {
     if (user) {
-      let stored = getStorage<StudyGroup[]>('unihub_study_groups', []);
-      if (stored.length < 3) {
-        stored = [...stored, ...generateExtraGroups(user.university)];
-        setStorage('unihub_study_groups', stored);
-      }
+      const stored = getStorage<StudyGroup[]>('unihub_study_groups', []);
       setGroups(stored);
     }
   }, [user]);
 
   if (!user) return null;
+
+  const handleCreateGroup = () => {
+    if (!newName.trim() || !newSubject.trim()) return;
+    
+    const group: StudyGroup = {
+      id: `g_${Math.random().toString(36).substr(2, 9)}`,
+      name: newName,
+      subject: newSubject,
+      university: user.university,
+      degree: newType === 'Degree' ? newSubject : undefined,
+      memberCount: 1,
+      activityStatus: 'Active',
+      description: newDesc || 'A new study group.',
+      tags: [newSubject.split(' ')[0], newType],
+      type: newType,
+      joined: true,
+      createdBy: user.name,
+      messages: []
+    };
+
+    const updated = [group, ...groups];
+    setGroups(updated);
+    setStorage('unihub_study_groups', updated);
+    setIsCreateOpen(false);
+    
+    // Reset form
+    setNewName("");
+    setNewSubject("");
+    setNewDesc("");
+    setNewType("Subject");
+  };
 
   const toggleJoin = (groupId: string) => {
     const updated = groups.map(g => {
@@ -53,9 +84,35 @@ export default function StudyGroups() {
     setStorage('unihub_study_groups', updated);
   };
 
-  const filteredGroups = groups.filter(g => 
-    activeTab === "subject" ? g.type === "Subject" : g.type === "University"
-  );
+  const handleSendMessage = () => {
+    if (!chatInput.trim() || !selectedGroup) return;
+
+    const newMessage = {
+      sender: user.name,
+      text: chatInput.trim(),
+      time: new Date().toISOString()
+    };
+
+    const updatedGroups = groups.map(g => {
+      if (g.id === selectedGroup.id) {
+        const msgs = g.messages || [];
+        return { ...g, messages: [...msgs, newMessage] };
+      }
+      return g;
+    });
+
+    setGroups(updatedGroups);
+    setStorage('unihub_study_groups', updatedGroups);
+    setSelectedGroup(updatedGroups.find(g => g.id === selectedGroup.id) || null);
+    setChatInput("");
+  };
+
+  const filteredGroups = groups.filter(g => {
+    const matchesTab = g.type.toLowerCase() === activeTab;
+    const matchesSearch = g.name.toLowerCase().includes(search.toLowerCase()) || 
+                          g.subject.toLowerCase().includes(search.toLowerCase());
+    return matchesTab && matchesSearch;
+  });
 
   const getActivityColor = (status: string) => {
     switch(status) {
@@ -67,129 +124,233 @@ export default function StudyGroups() {
   };
 
   return (
-    <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Community Hub</h1>
-        <p className="text-muted-foreground mt-2">
-          Connect with peers, share knowledge, and study together.
-        </p>
+    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Study Groups</h1>
+          <p className="text-muted-foreground mt-2">
+            Connect with peers, share knowledge, and study together across your university.
+          </p>
+        </div>
+
+        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+          <DialogTrigger asChild>
+            <Button className="shadow-sm">
+              <Plus className="w-4 h-4 mr-2" />
+              Create Group
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create a Study Group</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <Label>Group Name</Label>
+                <Input value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. Intro to Logic Prep" />
+              </div>
+              <div className="space-y-2">
+                <Label>Group Type</Label>
+                <Select value={newType} onChange={e => setNewType(e.target.value as any)}>
+                  <option value="Subject">Specific Subject/Module</option>
+                  <option value="Degree">Entire Degree Program</option>
+                  <option value="University">University Wide</option>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>{newType === 'Degree' ? 'Degree Name' : 'Subject/Topic'}</Label>
+                <Input value={newSubject} onChange={e => setNewSubject(e.target.value)} placeholder="e.g. Computer Science" />
+              </div>
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Textarea value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="What is this group for?" />
+              </div>
+              <Button className="w-full" onClick={handleCreateGroup}>Create Group</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-sidebar">
-          <TabsTrigger value="subject">Subject Groups</TabsTrigger>
-          <TabsTrigger value="university">University Groups</TabsTrigger>
-        </TabsList>
+      <div className="flex flex-col gap-6">
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input 
+            placeholder="Search groups by name or subject..." 
+            className="pl-9 bg-card"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
 
-        <motion.div 
-          key={activeTab}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {filteredGroups.map(group => (
-            <Card key={group.id} className="hover-elevate flex flex-col group border-border">
-              <CardContent className="p-6 flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                    <MessagesSquare className="w-6 h-6" />
-                  </div>
-                  <Badge variant="outline" className={getActivityColor(group.activityStatus)}>
-                    <Activity className="w-3 h-3 mr-1" />
-                    {group.activityStatus}
-                  </Badge>
-                </div>
-                
-                <h3 className="text-lg font-semibold mb-1 group-hover:text-primary transition-colors">{group.name}</h3>
-                <div className="text-sm text-muted-foreground flex items-center gap-1.5 mb-3">
-                  <Users className="w-4 h-4" />
-                  {group.memberCount.toLocaleString()} members
-                  <span className="mx-1">•</span>
-                  <span className="truncate">{group.university}</span>
-                </div>
-                
-                <p className="text-sm mb-6 flex-1 text-foreground/80">{group.description}</p>
-                
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {group.tags.map(tag => (
-                    <Badge key={tag} variant="secondary" className="text-xs bg-sidebar font-normal">
-                      <Hash className="w-3 h-3 mr-0.5 opacity-50" />
-                      {tag}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="bg-sidebar">
+            <TabsTrigger value="subject" className="px-6">Subject Groups</TabsTrigger>
+            <TabsTrigger value="degree" className="px-6">Degree Groups</TabsTrigger>
+            <TabsTrigger value="university" className="px-6">University Groups</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
+      <motion.div 
+        key={activeTab}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+      >
+        <AnimatePresence>
+          {filteredGroups.map((group, idx) => (
+            <motion.div
+              key={group.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ delay: Math.min(idx * 0.05, 0.3) }}
+            >
+              <Card className="hover-elevate flex flex-col group border-border h-full bg-card relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/40 to-primary/10" />
+                <CardContent className="p-6 flex-1 flex flex-col pt-8">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                      <Users className="w-6 h-6" />
+                    </div>
+                    <Badge variant="outline" className={getActivityColor(group.activityStatus)}>
+                      <Activity className="w-3 h-3 mr-1" />
+                      {group.activityStatus}
                     </Badge>
-                  ))}
-                </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors leading-tight">{group.name}</h3>
+                  <div className="text-sm text-muted-foreground flex items-center gap-1.5 mb-3 font-medium">
+                    <span className="flex items-center text-foreground/80">
+                      <Users className="w-3.5 h-3.5 mr-1" />
+                      {group.memberCount.toLocaleString()} members
+                    </span>
+                    <span className="mx-1 opacity-30">•</span>
+                    <span className="truncate">{group.university}</span>
+                  </div>
+                  
+                  <p className="text-sm mb-6 flex-1 text-foreground/80 leading-relaxed line-clamp-3">{group.description}</p>
+                  
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {group.tags.map(tag => (
+                      <Badge key={tag} variant="secondary" className="text-xs bg-sidebar border border-border/50 font-medium">
+                        <Hash className="w-3 h-3 mr-0.5 opacity-40" />
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
 
-                <div className="flex gap-2 mt-auto">
-                  <Button 
-                    variant={group.joined ? "outline" : "default"} 
-                    className="flex-1"
-                    onClick={() => toggleJoin(group.id)}
-                  >
-                    {group.joined ? "Leave Group" : "Join Group"}
-                  </Button>
-                  {group.joined && (
-                    <Button variant="secondary" className="px-3" onClick={() => setSelectedGroup(group)}>
-                      Open Chat
+                  <div className="flex gap-2 mt-auto pt-4 border-t border-border/50">
+                    <Button 
+                      variant={group.joined ? "outline" : "default"} 
+                      className={`flex-1 ${group.joined ? 'bg-sidebar/50 border-border/80' : 'shadow-sm'}`}
+                      onClick={() => toggleJoin(group.id)}
+                    >
+                      {group.joined ? "Leave Group" : "Join Group"}
                     </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                    {group.joined && (
+                      <Button variant="secondary" className="px-4 shadow-sm" onClick={() => setSelectedGroup(group)}>
+                        <MessagesSquare className="w-4 h-4 mr-2" /> Chat
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
-        </motion.div>
-      </Tabs>
+        </AnimatePresence>
+      </motion.div>
+      
+      {filteredGroups.length === 0 && (
+        <div className="text-center py-24 border-2 border-dashed rounded-xl bg-sidebar/30 border-border/60">
+          <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-20" />
+          <h3 className="font-semibold text-xl text-foreground">No groups found</h3>
+          <p className="text-muted-foreground mt-2 max-w-md mx-auto">Try a different search or create the first group for this category!</p>
+          <Button variant="outline" className="mt-6" onClick={() => setIsCreateOpen(true)}>
+            Create New Group
+          </Button>
+        </div>
+      )}
 
+      {/* Chat Dialog */}
       <Dialog open={!!selectedGroup} onOpenChange={(open) => !open && setSelectedGroup(null)}>
-        <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col p-0 gap-0 overflow-hidden">
+        <DialogContent className="sm:max-w-[600px] h-[700px] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden bg-background">
           {selectedGroup && (
             <>
-              <DialogHeader className="p-4 border-b border-border bg-sidebar m-0">
-                <DialogTitle className="flex items-center gap-2">
-                  <MessagesSquare className="w-5 h-5 text-primary" />
-                  {selectedGroup.name}
-                </DialogTitle>
-                <div className="text-xs text-muted-foreground font-normal">
-                  {selectedGroup.memberCount} members • {selectedGroup.activityStatus}
+              <DialogHeader className="p-4 border-b border-border bg-sidebar/80 m-0 shrink-0 shadow-sm z-10">
+                <div className="flex justify-between items-start mr-6">
+                  <div>
+                    <DialogTitle className="flex items-center gap-2 text-lg">
+                      <MessagesSquare className="w-5 h-5 text-primary" />
+                      {selectedGroup.name}
+                    </DialogTitle>
+                    <div className="text-xs text-muted-foreground font-medium mt-1 flex items-center gap-2">
+                      <span className="flex items-center"><Users className="w-3 h-3 mr-1"/> {selectedGroup.memberCount} members</span>
+                      <span className="w-1 h-1 rounded-full bg-border" />
+                      <span className={getActivityColor(selectedGroup.activityStatus).split(' ')[0]}>{selectedGroup.activityStatus}</span>
+                    </div>
+                  </div>
                 </div>
               </DialogHeader>
               
-              <div className="flex-1 p-4 overflow-y-auto bg-background space-y-4">
-                {/* Mock Chat Messages */}
+              <div className="flex-1 p-4 overflow-y-auto bg-card/30 space-y-6 relative">
+                {/* Mock historical messages to make it look populated */}
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center font-bold text-xs shrink-0">AS</div>
-                  <div className="bg-sidebar rounded-2xl rounded-tl-sm p-3 text-sm max-w-[80%]">
-                    <div className="font-semibold text-xs mb-1 opacity-70">Alex S.</div>
-                    Does anyone have the notes for week 3? I missed the lecture.
-                    <div className="text-[10px] opacity-50 mt-1 text-right">10:42 AM</div>
+                  <div className="w-8 h-8 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center font-bold text-xs shrink-0">SA</div>
+                  <div className="flex flex-col items-start max-w-[80%]">
+                    <div className="flex items-baseline gap-2 mb-1">
+                      <span className="font-semibold text-xs text-foreground/80">Sarah A.</span>
+                      <span className="text-[10px] text-muted-foreground">Yesterday, 10:42 AM</span>
+                    </div>
+                    <div className="bg-sidebar border rounded-2xl rounded-tl-sm p-3 text-sm shadow-sm text-foreground/90">
+                      Does anyone have the notes for week 3? I missed the lecture.
+                    </div>
                   </div>
                 </div>
-                <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center font-bold text-xs shrink-0">MJ</div>
-                  <div className="bg-sidebar rounded-2xl rounded-tl-sm p-3 text-sm max-w-[80%]">
-                    <div className="font-semibold text-xs mb-1 opacity-70">Maria J.</div>
-                    Yeah I do! Let me upload the PDF here in a sec.
-                    <div className="text-[10px] opacity-50 mt-1 text-right">10:45 AM</div>
-                  </div>
-                </div>
-                <div className="flex gap-3 justify-end mt-6">
-                  <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm p-3 text-sm max-w-[80%]">
-                    Awesome, thanks Maria! Also looking for a group for the final project.
-                    <div className="text-[10px] opacity-70 mt-1 text-right">10:50 AM</div>
-                  </div>
-                </div>
+
+                {/* Actual messages from state */}
+                {(selectedGroup.messages || []).map((msg, idx) => {
+                  const isMe = msg.sender === user.name;
+                  return (
+                    <div key={idx} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : ''}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${isMe ? 'bg-primary/20 text-primary' : 'bg-green-500/20 text-green-500'}`}>
+                        {msg.sender.substring(0, 2).toUpperCase()}
+                      </div>
+                      <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]`}>
+                        <div className={`flex items-baseline gap-2 mb-1 ${isMe ? 'flex-row-reverse' : ''}`}>
+                          <span className="font-semibold text-xs text-foreground/80">{isMe ? 'You' : msg.sender}</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            {format(new Date(msg.time), 'p')}
+                          </span>
+                        </div>
+                        <div className={`rounded-2xl p-3 text-sm shadow-sm ${
+                          isMe 
+                            ? 'bg-primary text-primary-foreground rounded-tr-sm' 
+                            : 'bg-sidebar border rounded-tl-sm text-foreground/90'
+                        }`}>
+                          {msg.text}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              <div className="p-3 border-t border-border bg-background flex items-center gap-2">
-                <Input 
-                  placeholder="Type a message..." 
-                  className="flex-1 bg-sidebar border-none focus-visible:ring-1"
-                  value={chatInput}
-                  onChange={e => setChatInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && setChatInput("")}
-                />
-                <Button size="icon" className="shrink-0" onClick={() => setChatInput("")}>
-                  <Send className="w-4 h-4" />
-                </Button>
+              <div className="p-4 border-t border-border bg-sidebar/50 shrink-0">
+                <form 
+                  onSubmit={e => { e.preventDefault(); handleSendMessage(); }}
+                  className="flex items-center gap-3"
+                >
+                  <Input 
+                    placeholder="Type a message to the group..." 
+                    className="flex-1 bg-background h-11"
+                    value={chatInput}
+                    onChange={e => setChatInput(e.target.value)}
+                  />
+                  <Button type="submit" size="icon" disabled={!chatInput.trim()} className="h-11 w-11 shrink-0 rounded-xl shadow-sm">
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </form>
               </div>
             </>
           )}

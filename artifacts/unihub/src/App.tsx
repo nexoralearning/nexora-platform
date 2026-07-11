@@ -17,6 +17,7 @@ import Assignments from '@/pages/assignments';
 import Jobs from '@/pages/jobs';
 import Marketplace from '@/pages/marketplace';
 import Settings from '@/pages/settings';
+import Messages from '@/pages/messages';
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ function AppContent() {
         <Route path="/assignments" component={Assignments} />
         <Route path="/jobs" component={Jobs} />
         <Route path="/marketplace" component={Marketplace} />
+        <Route path="/messages" component={Messages} />
         <Route path="/settings" component={Settings} />
         <Route component={NotFound} />
       </Switch>
