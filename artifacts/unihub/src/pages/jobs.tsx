@@ -51,7 +51,7 @@ export default function Jobs() {
 
   const fields = ["All", ...Array.from(new Set(jobs.map(j => j.field))).filter(Boolean)];
   const countries = ["All", ...Array.from(new Set(jobs.map(j => j.country))).filter(Boolean)];
-  const jobTypes = ["All", "Internship", "Graduate Job", "Remote Job", "Part-time Job", "Research Opportunity"];
+  const jobTypes = ["All", "Internship", "Graduate Job", "Full Time Job", "Remote Job", "Part-time Job", "Research Opportunity"];
 
   const filteredJobs = jobs.filter(j => {
     if (fieldFilter !== "All" && j.field !== fieldFilter) return false;
