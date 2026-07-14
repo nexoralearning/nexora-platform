@@ -18,6 +18,7 @@ import Jobs from '@/pages/jobs';
 import Marketplace from '@/pages/marketplace';
 import Settings from '@/pages/settings';
 import Messages from '@/pages/messages';
+import Friends from '@/pages/friends';
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ function AppContent() {
         <Route path="/jobs" component={Jobs} />
         <Route path="/marketplace" component={Marketplace} />
         <Route path="/messages" component={Messages} />
+        <Route path="/friends" component={Friends} />
         <Route path="/settings" component={Settings} />
         <Route component={NotFound} />
       </Switch>

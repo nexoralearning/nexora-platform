@@ -157,43 +157,8 @@ const generateJobs = (): Job[] => [
   { id: 'j46', title: 'Software Engineer – Full Time', company: 'iFood', country: 'Brazil', location: 'São Paulo', type: 'Remote', jobCategory: 'Full Time Job', pay: 'Paid', field: 'Technology', experienceLevel: 'Entry', description: 'Build logistics and marketplace features for Latin America\'s #1 food delivery platform. Remote-first culture.', relevantDegrees: ['Computer Science', 'Software Engineering'], postedDate: new Date(Date.now() - 86400000 * 2).toISOString() },
 ];
 
-const generateMarketplaceItems = (university: string): MarketplaceItem[] => {
-  const items: MarketplaceItem[] = [];
-  const categories: MarketplaceItem['category'][] = ['Programming', 'Design', 'Tutoring', 'Writing', 'Marketing', 'Notes', 'Books', 'Electronics', 'Study Equipment', 'Other'];
-  
-  // Add some specific items
-  items.push({
-    id: 'm1', title: 'Python Tutoring - 2 Hours', description: 'Struggling with data structures? I can help you ace your assignments.', price: 30, category: 'Tutoring', listingType: 'Service', sellerName: 'Alex Smith', sellerUniversity: university, rating: 4.8, reviewCount: 12, tags: ['Python', 'CS', 'Algorithms'], createdAt: new Date().toISOString()
-  });
-  items.push({
-    id: 'm2', title: 'Logo Design for Student Projects', description: 'Professional logo design for your startup or coursework.', price: 50, category: 'Design', listingType: 'Service', sellerName: 'Sarah J.', sellerUniversity: university, rating: 5.0, reviewCount: 5, tags: ['Design', 'Figma', 'Illustrator'], createdAt: new Date().toISOString()
-  });
-  items.push({
-    id: 'm3', title: 'Calculus 8th Edition', description: 'Good condition, no highlights.', price: 45, category: 'Books', listingType: 'Item', condition: 'Good', sellerName: 'Mike T.', sellerUniversity: university, tags: ['Math', 'Textbook'], createdAt: new Date().toISOString()
-  });
-
-  // Generate more
-  for (let i = 4; i <= 25; i++) {
-    const isService = Math.random() > 0.4;
-    const cat = categories[Math.floor(Math.random() * categories.length)];
-    items.push({
-      id: `m${i}`,
-      title: `${isService ? 'Expert' : 'Used'} ${cat} ${isService ? 'Services' : 'Bundle'}`,
-      description: isService ? `High quality ${cat.toLowerCase()} help for students.` : `Selling my old ${cat.toLowerCase()} items. Great condition.`,
-      price: Math.floor(Math.random() * 100) + 10,
-      category: cat,
-      listingType: isService ? 'Service' : 'Item',
-      condition: isService ? undefined : 'Fair',
-      sellerName: `Student ${i}`,
-      sellerUniversity: university,
-      rating: isService ? Number((Math.random() * 2 + 3).toFixed(1)) : undefined,
-      reviewCount: isService ? Math.floor(Math.random() * 50) : undefined,
-      tags: [cat, isService ? 'Help' : 'Cheap'],
-      createdAt: new Date(Date.now() - Math.random() * 864000000).toISOString()
-    });
-  }
-  return items;
-};
+// Marketplace starts empty — all listings are created by real users via the UI.
+const generateMarketplaceItems = (_university: string): MarketplaceItem[] => [];
 
 const generateStudyGroups = (university: string): StudyGroup[] => [
   // ── Subject groups ──────────────────────────────────────────────────────────
@@ -293,11 +258,11 @@ const generateStudyGroups = (university: string): StudyGroup[] => [
 
 export function initializeMockData(university: string) {
   // v5: realistic study groups, expanded jobs with more countries + Full Time
-  if (!getStorage('unihub_mock_initialized_v5', false)) {
+  if (!getStorage('unihub_mock_initialized_v6', false)) {
     setStorage('unihub_conversations', []);
   }
 
-  const isInitialized = getStorage('unihub_mock_initialized_v5', false);
+  const isInitialized = getStorage('unihub_mock_initialized_v6', false);
   if (isInitialized) return;
 
   const sampleAssignments: Assignment[] = [
@@ -903,5 +868,5 @@ Resources to Cover
   setStorage('unihub_marketplace', generateMarketplaceItems(university));
   setStorage('unihub_study_groups', generateStudyGroups(university));
 
-  setStorage('unihub_mock_initialized_v5', true);
+  setStorage('unihub_mock_initialized_v6', true);
 }

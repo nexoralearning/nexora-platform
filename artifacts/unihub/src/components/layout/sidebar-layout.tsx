@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { 
   LayoutDashboard, BookOpen, Youtube, FileText, 
   FileStack, Users, CalendarCheck, Briefcase, 
-  Store, Settings, LogOut, Menu, X, Moon, Sun, MessageSquare
+  Store, Settings, LogOut, Menu, X, Moon, Sun, MessageSquare, UserPlus
 } from "lucide-react";
 import { SiReact } from "react-icons/si"; // Placeholder for brand
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
     { icon: Briefcase, label: "Jobs & Internships", href: "/jobs" },
     { icon: Store, label: "Marketplace", href: "/marketplace" },
     { icon: MessageSquare, label: "Messages", href: "/messages", badge: unreadMessages > 0 ? unreadMessages : undefined },
+    { icon: UserPlus, label: "Friends", href: "/friends" },
   ];
 
   const SidebarContent = () => (
