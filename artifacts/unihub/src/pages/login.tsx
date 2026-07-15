@@ -34,7 +34,7 @@ export default function Login() {
           <div className="bg-primary text-primary-foreground p-1.5 rounded-md">
             <BookOpen className="w-5 h-5" />
           </div>
-          UniHub
+          Nexora
         </div>
 
         <motion.div 
@@ -102,7 +102,7 @@ export default function Login() {
         <div className="relative z-10 max-w-md text-center p-8 backdrop-blur-md bg-background/30 rounded-2xl border border-white/10 shadow-2xl">
           <h3 className="text-2xl font-bold mb-4">Focus on what matters.</h3>
           <p className="text-muted-foreground leading-relaxed">
-            "UniHub replaced my messy combination of notion boards, calendar apps, and endless browser bookmarks."
+            "Nexora replaced my messy combination of notion boards, calendar apps, and endless browser bookmarks."
           </p>
         </div>
       </div>

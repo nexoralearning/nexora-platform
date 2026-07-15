@@ -64,7 +64,7 @@ export default function Signup() {
             transition={{ delay: 0.4 }}
             className="text-lg text-muted-foreground leading-relaxed"
           >
-            Join thousands of international students on UniHub. Track assignments, find resources, and connect globally in one unified workspace.
+            Join thousands of international students on Nexora. Track assignments, find resources, and connect globally in one unified workspace.
           </motion.p>
           
           <div className="mt-12 grid grid-cols-2 gap-4">
@@ -87,7 +87,7 @@ export default function Signup() {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center lg:text-left">
             <h2 className="text-3xl font-bold tracking-tight">Create an account</h2>
-            <p className="text-muted-foreground mt-2">Enter your details to get started with UniHub</p>
+            <p className="text-muted-foreground mt-2">Enter your details to get started with Nexora</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">

@@ -64,7 +64,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
           <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
             <BookOpen className="w-5 h-5" />
           </div>
-          UniHub
+          Nexora
         </div>
       </div>
 
@@ -156,7 +156,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
           <div className="bg-primary text-primary-foreground p-1 rounded-md">
             <BookOpen className="w-5 h-5" />
           </div>
-          UniHub
+          Nexora
         </div>
         <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

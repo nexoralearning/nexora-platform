@@ -166,93 +166,93 @@ const generateStudyGroups = (university: string): StudyGroup[] => [
     id: 'g1', type: 'Subject', subject: 'Mathematics', university,
     name: 'Calculus Study Circle',
     description: 'Work through problem sets together, share solved examples, and support each other before Calculus exams.',
-    tags: ['Calculus', 'Maths'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Calculus', 'Maths'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g2', type: 'Subject', subject: 'Computer Science', university,
     name: 'Python & Algorithms',
     description: 'Practice coding challenges, review data structures, and tackle algorithm problems as a team.',
-    tags: ['Python', 'Algorithms'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Python', 'Algorithms'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g3', type: 'Subject', subject: 'Law', university,
     name: 'Contract Law Revision',
     description: 'Discussion group for contract law concepts, case summaries, and essay technique for exams.',
-    tags: ['Law', 'Contract'], memberCount: 0, activityStatus: 'Quiet', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Law', 'Contract'], memberCount: 0, activityStatus: 'Quiet', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g4', type: 'Subject', subject: 'Chemistry', university,
     name: 'Organic Chemistry Lab Prep',
     description: 'Share lab notes, walk through reaction mechanisms, and review past papers before practicals.',
-    tags: ['Chemistry', 'Lab'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Chemistry', 'Lab'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g5', type: 'Subject', subject: 'Business', university,
     name: 'Marketing Strategy Group',
     description: 'Case study discussions, group marketing plan reviews, and brand analysis for Business modules.',
-    tags: ['Marketing', 'Business'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Marketing', 'Business'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g6', type: 'Subject', subject: 'Medicine', university,
     name: 'Anatomy & Physiology',
     description: 'Weekly flashcard sessions and diagram reviews for anatomy and physiology modules.',
-    tags: ['Medicine', 'Anatomy'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Medicine', 'Anatomy'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g7', type: 'Subject', subject: 'Economics', university,
     name: 'Macroeconomics Discussion',
     description: 'Discuss fiscal and monetary policy, Keynesian models, and how to structure exam essays.',
-    tags: ['Economics', 'Macro'], memberCount: 0, activityStatus: 'Quiet', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Economics', 'Macro'], memberCount: 0, activityStatus: 'Quiet', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g8', type: 'Subject', subject: 'Physics', university,
     name: 'Quantum Physics Peer Group',
     description: 'Work through problem sheets together and clarify difficult quantum mechanics concepts.',
-    tags: ['Physics', 'Quantum'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Physics', 'Quantum'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g9', type: 'Subject', subject: 'Psychology', university,
     name: 'Cognitive Psychology Notes',
     description: 'Share lecture notes, discuss memory and perception studies, and quiz each other before tests.',
-    tags: ['Psychology', 'Cognitive'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Psychology', 'Cognitive'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   // ── Degree groups ───────────────────────────────────────────────────────────
   {
     id: 'g10', type: 'Degree', subject: 'Computer Science', degree: 'Computer Science', university,
     name: 'Computer Science Majors',
     description: 'All CS students welcome — share internship tips, module advice, and career resources.',
-    tags: ['CS', 'Degree'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['CS', 'Degree'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g11', type: 'Degree', subject: 'Business', degree: 'Business Administration', university,
     name: 'Business & Management Cohort',
     description: 'Connect with fellow Business students for course advice, placement tips, and group projects.',
-    tags: ['Business', 'Degree'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Business', 'Degree'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g12', type: 'Degree', subject: 'Law', degree: 'Law', university,
     name: 'Law Society Study Hub',
     description: 'LLB and LLM students sharing mooting tips, case notes, and revision strategies.',
-    tags: ['Law', 'Degree'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Law', 'Degree'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   // ── University-wide groups ──────────────────────────────────────────────────
   {
     id: 'g13', type: 'University', subject: 'General', university,
     name: 'International Students Connect',
     description: 'A welcoming space for international students to share advice on visas, accommodation, and campus life.',
-    tags: ['International', 'Community'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['International', 'Community'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g14', type: 'University', subject: 'General', university,
     name: 'Exam Season Support',
     description: 'Motivation, study tips, accountability partners, and wellbeing resources for exam period.',
-    tags: ['Exams', 'Wellbeing'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Exams', 'Wellbeing'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
   {
     id: 'g15', type: 'University', subject: 'Career', university,
     name: 'Graduate Job Hunters',
     description: 'Share job leads, review each other\'s CVs, and prep for graduate scheme interviews together.',
-    tags: ['Jobs', 'Career'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'UniHub', messages: []
+    tags: ['Jobs', 'Career'], memberCount: 0, activityStatus: 'Active', joined: false, createdBy: 'Nexora', messages: []
   },
 ];
 
