@@ -21,6 +21,16 @@ export interface Note {
   category: 'Lecture' | 'Tutorial' | 'Personal' | 'Research';
   createdAt: string;
   updatedAt: string;
+  images?: string[]; // base64 data URLs
+}
+
+export interface GroupMessage {
+  sender: string;
+  text: string;
+  time: string;
+  image?: string; // base64 data URL
+  flagged?: boolean;
+  flagReason?: string;
 }
 
 export interface Job {
@@ -71,7 +81,7 @@ export interface StudyGroup {
   type: 'Subject' | 'University' | 'Degree';
   joined?: boolean;
   createdBy?: string;
-  messages?: { sender: string; text: string; time: string }[];
+  messages?: GroupMessage[];
 }
 
 // Data generator helpers
