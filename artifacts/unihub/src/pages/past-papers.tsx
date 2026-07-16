@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 import { getStorage, setStorage } from "@/lib/storage";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -10,20 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Search, FileStack, Plus, Trash2, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-interface PastPaper {
-  id: string;
-  title: string;
-  university: string;
-  country: string;
-  degree: string;
-  subject: string;
-  year: number;
-  semester: "Semester 1" | "Semester 2" | "Annual";
-  link?: string;
-  addedBy: string;
-  addedAt: string;
-}
+import { SEED_PAPERS, type PastPaper } from "@/lib/past-papers-seed";
 
 const COUNTRIES = ["Australia","Brazil","Canada","France","Germany","Ghana","India","Ireland","Japan","Kenya","Malaysia","Mauritius","Netherlands","New Zealand","Nigeria","Portugal","Rwanda","Singapore","South Africa","South Korea","Spain","Sweden","Switzerland","Turkey","UAE","UK","USA","Other"];
 const SEMESTERS: PastPaper["semester"][] = ["Semester 1", "Semester 2", "Annual"];
@@ -53,7 +39,15 @@ export default function PastPapers() {
   const [fLink, setFLink] = useState("");
 
   useEffect(() => {
-    if (user) setPapers(getStorage<PastPaper[]>("unihub_past_papers", []));
+    if (!user) return;
+    const stored = getStorage<PastPaper[]>("unihub_past_papers", []);
+    // First visit: seed with built-in archive; subsequent visits use stored data
+    if (stored.length === 0) {
+      setStorage("unihub_past_papers", SEED_PAPERS);
+      setPapers(SEED_PAPERS);
+    } else {
+      setPapers(stored);
+    }
   }, [user]);
 
   if (!user) return null;
