@@ -1,6 +1,6 @@
 {
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm --filter @workspace/unihub run build && pnpm --filter @workspace/api-server run build && cp -r artifacts/unihub/dist/public ./public",
-  "outputDirectory": "public",
+  "buildCommand": "pnpm --filter @workspace/unihub run build && pnpm --filter @workspace/api-server run build",
+  "outputDirectory": "artifacts/unihub/dist/public",
   "framework": null
 }
