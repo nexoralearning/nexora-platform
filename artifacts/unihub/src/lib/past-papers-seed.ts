@@ -50,6 +50,9 @@ function pp(
   semester: PastPaper["semester"],
   link?: string,
 ): PastPaper {
+  // Auto-generate a Google search link so every paper has a working "Open" button.
+  // Specific link overrides the auto-generated one when provided.
+  const autoLink = `https://www.google.com/search?q=${encodeURIComponent(`"${title}" "${university}" ${year} past exam paper`)}`;
   return {
     id: `seed-${n}`,
     title,
@@ -59,7 +62,7 @@ function pp(
     country,
     year,
     semester,
-    link,
+    link: link ?? autoLink,
     addedBy: SYS,
     addedAt: new Date(`${year}-06-01T00:00:00Z`).toISOString(),
   };

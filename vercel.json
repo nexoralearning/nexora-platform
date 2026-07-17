@@ -2,5 +2,8 @@
   "installCommand": "pnpm install",
   "buildCommand": "pnpm --filter @workspace/unihub run build && pnpm --filter @workspace/api-server run build",
   "outputDirectory": "artifacts/unihub/dist/public",
-  "framework": null
+  "framework": null,
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
 }
