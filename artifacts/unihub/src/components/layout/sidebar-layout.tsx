@@ -5,7 +5,6 @@ import {
   FileStack, Users, CalendarCheck, Briefcase, 
   Store, Settings, LogOut, Menu, X, Moon, Sun, MessageSquare, UserPlus
 } from "lucide-react";
-import { SiReact } from "react-icons/si"; // Placeholder for brand
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getCurrentUser, logout } from "@/lib/auth";
