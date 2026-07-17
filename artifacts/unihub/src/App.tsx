@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { ThemeProvider } from '@/components/theme-provider';
+import { SplashScreen } from '@/components/splash-screen';
 import NotFound from '@/pages/not-found';
 import { SidebarLayout } from '@/components/layout/sidebar-layout';
 
@@ -59,7 +60,8 @@ function AppContent() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} themes={['light', 'dark', 'purple-black', 'red-black']}>
+        <SplashScreen />
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
           <AppContent />
         </WouterRouter>

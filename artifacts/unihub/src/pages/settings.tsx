@@ -134,26 +134,61 @@ export default function Settings() {
                 <CardDescription>Customize the look and feel of your workspace.</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 gap-4">
-                  <button 
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {/* Light */}
+                  <button
                     onClick={() => setTheme("light")}
-                    className={`border-2 rounded-xl p-2 bg-slate-50 transition-all ${theme === 'light' ? 'border-primary' : 'border-transparent'}`}
+                    className={`border-2 rounded-xl p-2 transition-all ${theme === 'light' ? 'border-primary' : 'border-transparent hover:border-border'}`}
+                    style={{ background: "#f8fafc" }}
                   >
-                    <div className="w-full h-20 rounded-md bg-white border shadow-sm flex flex-col p-2 gap-2">
-                      <div className="w-full h-2 bg-slate-200 rounded-sm"></div>
-                      <div className="w-1/2 h-2 bg-slate-200 rounded-sm"></div>
+                    <div className="w-full h-20 rounded-md border shadow-sm flex flex-col p-2 gap-2" style={{ background: "#ffffff", borderColor: "#e2e8f0" }}>
+                      <div className="w-full h-2 rounded-sm" style={{ background: "#e2e8f0" }}></div>
+                      <div className="w-1/2 h-2 rounded-sm" style={{ background: "#e2e8f0" }}></div>
+                      <div className="mt-auto w-8 h-2 rounded-sm" style={{ background: "#3b82f6" }}></div>
                     </div>
-                    <div className="text-sm font-medium mt-2 text-center text-slate-900">Light</div>
+                    <div className="text-sm font-medium mt-2 text-center" style={{ color: "#0f172a" }}>Light</div>
                   </button>
-                  <button 
+
+                  {/* Dark */}
+                  <button
                     onClick={() => setTheme("dark")}
-                    className={`border-2 rounded-xl p-2 bg-slate-900 transition-all ${theme === 'dark' ? 'border-primary' : 'border-transparent'}`}
+                    className={`border-2 rounded-xl p-2 transition-all ${theme === 'dark' ? 'border-primary' : 'border-transparent hover:border-border'}`}
+                    style={{ background: "#0d1117" }}
                   >
-                    <div className="w-full h-20 rounded-md bg-slate-950 border border-slate-800 shadow-sm flex flex-col p-2 gap-2">
-                      <div className="w-full h-2 bg-slate-800 rounded-sm"></div>
-                      <div className="w-1/2 h-2 bg-slate-800 rounded-sm"></div>
+                    <div className="w-full h-20 rounded-md border flex flex-col p-2 gap-2" style={{ background: "#060a12", borderColor: "#1e2533" }}>
+                      <div className="w-full h-2 rounded-sm" style={{ background: "#1e2533" }}></div>
+                      <div className="w-1/2 h-2 rounded-sm" style={{ background: "#1e2533" }}></div>
+                      <div className="mt-auto w-8 h-2 rounded-sm" style={{ background: "#6674f4" }}></div>
                     </div>
-                    <div className="text-sm font-medium mt-2 text-center text-slate-100">Dark</div>
+                    <div className="text-sm font-medium mt-2 text-center" style={{ color: "#e2e8f0" }}>Dark</div>
+                  </button>
+
+                  {/* Purple & Black */}
+                  <button
+                    onClick={() => setTheme("purple-black")}
+                    className={`border-2 rounded-xl p-2 transition-all ${theme === 'purple-black' ? 'border-[#a855f7]' : 'border-transparent hover:border-border'}`}
+                    style={{ background: "#0d0515" }}
+                  >
+                    <div className="w-full h-20 rounded-md border flex flex-col p-2 gap-2" style={{ background: "#08030e", borderColor: "#2d1650" }}>
+                      <div className="w-full h-2 rounded-sm" style={{ background: "#2d1650" }}></div>
+                      <div className="w-1/2 h-2 rounded-sm" style={{ background: "#2d1650" }}></div>
+                      <div className="mt-auto w-8 h-2 rounded-sm" style={{ background: "#a855f7" }}></div>
+                    </div>
+                    <div className="text-sm font-medium mt-2 text-center" style={{ color: "#e9d5ff" }}>Purple</div>
+                  </button>
+
+                  {/* Red & Black */}
+                  <button
+                    onClick={() => setTheme("red-black")}
+                    className={`border-2 rounded-xl p-2 transition-all ${theme === 'red-black' ? 'border-[#ef4444]' : 'border-transparent hover:border-border'}`}
+                    style={{ background: "#0d0303" }}
+                  >
+                    <div className="w-full h-20 rounded-md border flex flex-col p-2 gap-2" style={{ background: "#080202", borderColor: "#3d0f0f" }}>
+                      <div className="w-full h-2 rounded-sm" style={{ background: "#3d0f0f" }}></div>
+                      <div className="w-1/2 h-2 rounded-sm" style={{ background: "#3d0f0f" }}></div>
+                      <div className="mt-auto w-8 h-2 rounded-sm" style={{ background: "#ef4444" }}></div>
+                    </div>
+                    <div className="text-sm font-medium mt-2 text-center" style={{ color: "#fecaca" }}>Red</div>
                   </button>
                 </div>
               </CardContent>
