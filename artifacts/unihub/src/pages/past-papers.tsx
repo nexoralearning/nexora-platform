@@ -41,12 +41,23 @@ export default function PastPapers() {
   useEffect(() => {
     if (!user) return;
     const stored = getStorage<PastPaper[]>("unihub_past_papers", []);
-    // First visit: seed with built-in archive; subsequent visits use stored data
     if (stored.length === 0) {
+      // First visit — seed with built-in archive
       setStorage("unihub_past_papers", SEED_PAPERS);
       setPapers(SEED_PAPERS);
     } else {
-      setPapers(stored);
+      // Patch any seed papers that are missing links (data from before links were added)
+      const seedMap = new Map(SEED_PAPERS.map(p => [p.id, p]));
+      let changed = false;
+      const patched = stored.map(p => {
+        if (!p.link && seedMap.has(p.id)) {
+          changed = true;
+          return { ...p, link: seedMap.get(p.id)!.link };
+        }
+        return p;
+      });
+      if (changed) setStorage("unihub_past_papers", patched);
+      setPapers(patched);
     }
   }, [user]);
 
