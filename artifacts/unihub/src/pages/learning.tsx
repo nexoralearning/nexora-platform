@@ -149,7 +149,7 @@ export default function LearningHub() {
                     </h3>
                     <div className="grid gap-4 md:grid-cols-2">
                       {currentSubject.modules.map((mod, i) => (
-                        <Card key={mod.id} className="bg-sidebar/50 border-border">
+                        <Card key={mod.name} className="bg-sidebar/50 border-border">
                           <CardContent className="p-5">
                             <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                               <span className="bg-primary/20 text-primary text-xs w-6 h-6 flex items-center justify-center rounded-full shrink-0">
